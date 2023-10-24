@@ -1,5 +1,6 @@
 import socket
 from time import sleep
+import ctypes
 
 ELEV_HOME_START = b'ELEVATION HOME START'
 ELEV_HOME_STOP = b'ELEVATION HOME STOP'
@@ -11,7 +12,8 @@ ELEV_GET_POS = b'ELEVATION GET POSITION'
 ELEV_GET_TARGET = b'ELEVATION GET'
 ELEV_GET_FLAGS = b'ELEVATION GET FLAGS'
 ELEV_GET_ALL = b'ELEVATION GET ALL'
-
+    
+    
 class Elevation:
     def __init__(self, baudrate = 9600) -> None:
         self.elevation = 0
@@ -58,28 +60,28 @@ class Elevation:
         sleep(0.1)
         
         return recieved_msg
-        
-            
+
             
     def start_homing(self):
-        self.send_command(ELEV_HOME_START)
+        msg = self.send_command(ELEV_HOME_START)
         
     def goto_absolute(self, position):
         msg = ELEV_GOTO + bytearray(str(position).encode('ascii'))
         self.send_command(msg)
         
     def get_position(self):
-        received = self.send_command(ELEV_GET_POS)
-        
-        print("Position: ",received)
-    #def goto_relative(self, position):
-        
-        
+        msg = self.send_command(ELEV_GET_POS)
+        print(msg)
+    
+    def stop(self):
+        self.socket.close()
     
 if __name__ == '__main__':
     elev = Elevation()
     elev.begin()
     #elev.start_homing()
-    elev.goto_absolute(500)
+    elev.goto_absolute(300)
     elev.get_position()
-    print(elev.send_command(ELEV_GET_ALL))
+    #print(elev.send_command(ELEV_GET_ALL))""
+    
+    elev.stop()
