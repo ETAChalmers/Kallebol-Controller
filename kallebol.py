@@ -25,4 +25,6 @@ class Kallebol:
         pass
     
     def goto_position(self, azimuth, elevation):
-        pass
+        self.linear_actuatator.goto_absolute(elevation)
+        self.servo.move_position(azimuth)
+        

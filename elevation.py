@@ -12,7 +12,9 @@ ELEV_GET_POS = b'ELEVATION GET POSITION'
 ELEV_GET_TARGET = b'ELEVATION GET'
 ELEV_GET_FLAGS = b'ELEVATION GET FLAGS'
 ELEV_GET_ALL = b'ELEVATION GET ALL'
-    
+
+MAX_HIGHEST = 0
+MAX_LOWEST = 1100
     
 class Elevation:
     def __init__(self, baudrate = 9600) -> None:
@@ -20,7 +22,7 @@ class Elevation:
         self.target_position = 0
         self.current_speed = 0
         
-        self.baudrate = baudrate 
+        self.baudrate = baudrate    
         self.ip_addr = '192.168.30.169'
         self.port = 2217
         try:     
@@ -41,7 +43,7 @@ class Elevation:
         print("sending", msg)
         self.socket.send(msg)
         
-        sleep(0.5)
+        sleep(0.1)
         
         while True:
             print("recving")
@@ -64,10 +66,22 @@ class Elevation:
             
     def start_homing(self):
         msg = self.send_command(ELEV_HOME_START)
+        print(msg)
         
     def goto_absolute(self, position):
-        msg = ELEV_GOTO + bytearray(str(position).encode('ascii'))
+        points = int(13.7*(87 - position))
+        
+        if points > MAX_LOWEST:
+            points = MAX_LOWEST
+        
+        if points < MAX_HIGHEST:
+            points = MAX_HIGHEST
+
+        msg = ELEV_GOTO + bytearray(str(points).encode('ascii'))
         self.send_command(msg)
+        
+    def get_status(self):
+        print(self.send_command(ELEV_GET_ALL))
         
     def get_position(self):
         msg = self.send_command(ELEV_GET_POS)
