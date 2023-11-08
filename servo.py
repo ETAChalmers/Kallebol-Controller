@@ -137,10 +137,10 @@ class Servo:
         self.control_word = Control_Word()
         self.control_word.change_set_imm = 1
         self.control_word.endless = 0
+        self.control_word.endless = 0
 
         self.speed = 0
 
-        self.baudrate = baudrate 
         self.ip_addr = '192.168.30.143'
         self.port = 8886
         
@@ -196,7 +196,9 @@ class Servo:
         return result
         
     def write_object(self, index, subindex, data):
-        msg = b"O " + bytearray(str(index).encode('ascii')) + bytearray(".".encode('ascii')) + bytearray(str(subindex).encode('ascii')) + bytearray("=".encode('ascii')) + bytearray(str(data).encode('ascii')) + b'\r'
+        msg = b"O " + bytearray(str(index).encode('ascii')) + \
+            bytearray(".".encode('ascii')) + bytearray(str(subindex).encode('ascii')) + \
+            bytearray("=".encode('ascii')) + bytearray(str(data).encode('ascii')) + b'\r'
         self.socket.send(msg)
         recieved_msg = b''
         
@@ -204,6 +206,7 @@ class Servo:
 
         while True:
             buffer = self.socket.recv(256)
+
             if (buffer.count(b'\r') > 0):
                 recieved_msg += buffer
                 break
@@ -221,6 +224,7 @@ class Servo:
 
         self.write_object(1100,3, control_word.word)
 
+        time.sleep(0.5)
 
     def read_control_word(self):
         print("++++++++++++ READ CONTROL WORD +++++++++++++++")
@@ -233,12 +237,13 @@ class Servo:
     def read_status_word(self):
         print("++++++++++ READ STATUS WORD ++++++++++++")
         recieved_control_word = self.read_object(1000, 3)
-
+        
         for i in range(0, 16):
             print(str(i) + " : " + STATUS_WORD_LOOKUP[i] + ": ", (int(recieved_control_word) >> i) & 1)
 
     def read_object(self, index, subindex):
-        msg = b"O " + bytearray(str(index).encode('ascii')) + bytearray(".".encode('ascii')) + bytearray(str(subindex).encode('ascii')) + b'\r'
+        msg = b"O " + bytearray(str(index).encode('ascii')) + \
+            bytearray(".".encode('ascii')) + bytearray(str(subindex).encode('ascii')) + b'\r'
         self.socket.send(msg)
         
         time.sleep(0.05)
@@ -279,6 +284,4 @@ if __name__ == '__main__':
     control_word.stop = 0
     
     print(servo.read_object(2200, 2))
-    
-    
     

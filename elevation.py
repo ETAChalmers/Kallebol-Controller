@@ -46,9 +46,9 @@ class Elevation:
         sleep(0.1)
         
         while True:
-            print("recving")
+            #print("recving")
             buffer = self.socket.recv(256)
-            print("bajs")
+            #print("bajs")
             if (buffer[len(buffer) - 1] == 10):
                 recieved_msg += str(buffer)
                 
@@ -85,7 +85,9 @@ class Elevation:
         
     def get_position(self):
         msg = self.send_command(ELEV_GET_POS)
+        msg = msg.split("\n")
         print(msg)
+        
     
     def stop(self):
         self.socket.close()
