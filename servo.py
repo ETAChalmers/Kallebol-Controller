@@ -182,7 +182,7 @@ class Servo:
     def move_azimuth(self, degrees):
         points = 840*degrees
         
-        self.move_position(self, points)
+        self.move_position(points)
         
     def set_move_parameters(self):
         self.write_object(1100, 14, 2000)
@@ -227,19 +227,25 @@ class Servo:
         time.sleep(0.5)
 
     def read_control_word(self):
+        #print("++++++++++++ READ CONTROL WORD +++++++++++++++")
+        self.recieved_control_word = self.read_object(1100, 3)
+
+        #for i in range(0, 16):
+        #    print(str(i) + " : ", (int(recieved_control_word) >> i) & 1)
+        
+    def print_control_word(self):
         print("++++++++++++ READ CONTROL WORD +++++++++++++++")
-        recieved_control_word = self.read_object(1100, 3)
+        self.recieved_control_word = self.read_object(1100, 3)
 
         for i in range(0, 16):
-            print(str(i) + " : ", (int(recieved_control_word) >> i) & 1)
-
+            print(str(i) + " : ", (int(self.recieved_control_word) >> i) & 1)
 
     def read_status_word(self):
         print("++++++++++ READ STATUS WORD ++++++++++++")
-        recieved_control_word = self.read_object(1000, 3)
+        self.recieved_control_word = self.read_object(1000, 3)
         
         for i in range(0, 16):
-            print(str(i) + " : " + STATUS_WORD_LOOKUP[i] + ": ", (int(recieved_control_word) >> i) & 1)
+            print(str(i) + " : " + STATUS_WORD_LOOKUP[i] + ": ", (int(self.recieved_control_word) >> i) & 1)
 
     def read_object(self, index, subindex):
         msg = b"O " + bytearray(str(index).encode('ascii')) + \
@@ -248,7 +254,7 @@ class Servo:
         
         time.sleep(0.05)
         
-        print("MSG: ", len(msg))
+        #print("MSG: ", len(msg))
         recieved_msg = b''
         
         while True:
@@ -262,7 +268,7 @@ class Servo:
             else:
                 break
         
-        print(recieved_msg)
+        #print(recieved_msg)
         return bytes.decode(recieved_msg, encoding='ascii')
     
 if __name__ == '__main__':

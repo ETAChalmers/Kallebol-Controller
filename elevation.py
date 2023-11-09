@@ -85,7 +85,7 @@ class Elevation:
         
     def get_position(self):
         msg = self.send_command(ELEV_GET_POS)
-        msg = msg.split("\n")
+        msg = msg.split("\\n")
         print(msg)
         
     

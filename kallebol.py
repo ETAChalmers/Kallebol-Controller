@@ -1,6 +1,9 @@
 from elevation import Elevation
 from servo import Servo
 import time
+import numpy as np
+
+from radio import Radio
 
 STEP = 1
 
@@ -14,6 +17,7 @@ class Kallebol:
 
         self.linear_actuatator = Elevation()
         self.servo = Servo()
+        #self.radio = Radio()
 
     def begin(self):
         self.servo.begin()
@@ -29,35 +33,52 @@ class Kallebol:
     
     def goto_position(self, azimuth, elevation):
         self.linear_actuatator.goto_absolute(elevation)
-        self.servo.move_position(azimuth)
+        self.servo.move_azimuth(azimuth)
         
         counter = 0
-        while counter < 100:
-            current_elevation = self.linear_actuatator.get_position()
-            current_azimuth = float(self.servo.read_current_position())
+        while counter < 200:
+            current_elevation = 0#87 - (self.linear_actuatator.get_position()/13.7)
+            
+            current_azimuth = float(self.servo.read_current_position())/840
             
             print("Current elevation: ", current_elevation)
             print("Current azimuth: ", current_azimuth)
+            print("Counter: ", counter)
             
-            if current_azimuth < azimuth + 5.0 and current_azimuth > azimuth - 5.0:
+            if current_azimuth < azimuth + 0.1 and current_azimuth > azimuth - 0.1:
                 print("Reached")
                 break
             
-            time.sleep(1)
+            time.sleep(0.5)
             counter += 1
     
     def sweep(self, min_elev, max_elev, step_elev, min_azi, max_azi, step_azi):
         going_right = True
         
-        for elevation in range(min_elev, max_elev, step_elev):
+        map = np.zeros((step_elev, step_azi))
+        
+        for x, elevation in enumerate(np.linspace(min_elev, max_elev, step_elev)):
             if going_right == True:
-                for azimuth in range(min_azi, max_azi, step_azi):
+                for y, azimuth in enumerate(np.linspace(min_azi, max_azi, step_azi)):
+                    print("Azimuth: ", azimuth)
+                    print("Elevation: ", elevation)
                     self.goto_position(azimuth, elevation)
+                    
+                    time.sleep(1)
+                    map[x][y] = self.radio.average_power()
+                    print(map)                    
                 going_right = False
                 
             else:
-                for azimuth in range(max_azi, min_azi, step_azi):
+                for y, azimuth in enumerate(np.linspace(max_azi, min_azi, step_azi)):
+                    print("Azimuth: ", azimuth)
+                    print("Elevation: ", elevation)
                     self.goto_position(azimuth, elevation)
+                    
+                    time.sleep(1)
+                    map[x][-y] = self.radio.average_power()
+                    print(map)
                 
                 going_right = True
-            
+        
+        return map
