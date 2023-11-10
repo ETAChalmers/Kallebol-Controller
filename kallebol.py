@@ -17,7 +17,7 @@ class Kallebol:
 
         self.linear_actuatator = Elevation()
         self.servo = Servo()
-        #self.radio = Radio()
+        self.radio = Radio()
 
     def begin(self):
         self.servo.begin()
@@ -52,14 +52,14 @@ class Kallebol:
             time.sleep(0.5)
             counter += 1
     
-    def sweep(self, min_elev, max_elev, step_elev, min_azi, max_azi, step_azi):
+    def sweep(self, min_elev, max_elev, steps_elev, min_azi, max_azi, steps_azi):
         going_right = True
         
-        map = np.zeros((step_elev, step_azi))
+        map = np.zeros((steps_elev, steps_azi))
         
-        for x, elevation in enumerate(np.linspace(min_elev, max_elev, step_elev)):
+        for x, elevation in enumerate(np.linspace(min_elev, max_elev, steps_elev)):
             if going_right == True:
-                for y, azimuth in enumerate(np.linspace(min_azi, max_azi, step_azi)):
+                for y, azimuth in enumerate(np.linspace(min_azi, max_azi, steps_azi)):
                     print("Azimuth: ", azimuth)
                     print("Elevation: ", elevation)
                     self.goto_position(azimuth, elevation)
@@ -70,15 +70,17 @@ class Kallebol:
                 going_right = False
                 
             else:
-                for y, azimuth in enumerate(np.linspace(max_azi, min_azi, step_azi)):
+                for y, azimuth in enumerate(np.linspace(max_azi, min_azi, steps_azi)):
                     print("Azimuth: ", azimuth)
                     print("Elevation: ", elevation)
-                    self.goto_position(azimuth, elevation)
                     
+                    self.goto_position(azimuth, elevation)
                     time.sleep(1)
                     map[x][-y] = self.radio.average_power()
                     print(map)
                 
                 going_right = True
-        
+        with open('map.npy', 'wb') as file:
+            np.save(file, map)
+            
         return map
