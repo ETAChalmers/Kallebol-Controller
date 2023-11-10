@@ -83,7 +83,7 @@ class Kallebol:
                 going_right = True
                 
         file_name = datetime.now()
-        file_name = file_name.strftime("%Y-%m-%d-%H_%M_%S")
+        file_name = file_name.strftime("map-%Y-%m-%d-%H_%M_%S.npy")
         with open(file_name, 'wb') as file:
             np.save(file, map)
             
