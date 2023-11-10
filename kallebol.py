@@ -2,6 +2,7 @@ from elevation import Elevation
 from servo import Servo
 import time
 import numpy as np
+from datetime import datetime
 
 from radio import Radio
 
@@ -80,7 +81,10 @@ class Kallebol:
                     print(map)
                 
                 going_right = True
-        with open('map.npy', 'wb') as file:
+                
+        file_name = datetime.now()
+        file_name = file_name.strftime("%Y-%m-%d-%H_%M_%S")
+        with open(file_name, 'wb') as file:
             np.save(file, map)
             
         return map
