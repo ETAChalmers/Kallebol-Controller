@@ -7,6 +7,7 @@ from datetime import datetime
 from radio import Radio
 
 STEP = 1
+GOTO_FAIL_TRESHHOLD = 10000 # 100ms per point
 
 class Kallebol:
     def __init__(self) -> None:
@@ -27,7 +28,7 @@ class Kallebol:
         #self.linear_actuatator.start_homing()
     
     def go_home(self):
-        pass
+        self.goto_position(0, 0)
     
     def find_sun(self):
         pass
@@ -37,7 +38,7 @@ class Kallebol:
         self.servo.move_azimuth(azimuth)
         
         counter = 0
-        while counter < 200:
+        while counter < GOTO_FAIL_TRESHHOLD:
             current_elevation = 0#87 - (self.linear_actuatator.get_position()/13.7)
             
             current_azimuth = float(self.servo.read_current_position())/840
@@ -46,12 +47,14 @@ class Kallebol:
             print("Current azimuth: ", current_azimuth)
             print("Counter: ", counter)
             
-            if current_azimuth < azimuth + 0.1 and current_azimuth > azimuth - 0.1:
+            if current_azimuth < azimuth + 0.05 and current_azimuth > azimuth - 0.05:
                 print("Reached")
-                break
+                return True
             
-            time.sleep(0.5)
+            time.sleep(0.1)
             counter += 1
+            
+        return False
     
     def sweep(self, min_elev, max_elev, steps_elev, min_azi, max_azi, steps_azi):
         going_right = True
@@ -63,9 +66,11 @@ class Kallebol:
                 for y, azimuth in enumerate(np.linspace(min_azi, max_azi, steps_azi)):
                     print("Azimuth: ", azimuth)
                     print("Elevation: ", elevation)
-                    self.goto_position(azimuth, elevation)
+                    if(not self.goto_position(azimuth, elevation)):
+                        print("Failed to go to position. It timed out")
+                        return False
                     
-                    time.sleep(1)
+                    time.sleep(0.1)
                     map[x][y] = self.radio.average_power()
                     print(map)                    
                 going_right = False
@@ -75,9 +80,12 @@ class Kallebol:
                     print("Azimuth: ", azimuth)
                     print("Elevation: ", elevation)
                     
-                    self.goto_position(azimuth, elevation)
-                    time.sleep(1)
-                    map[x][-y] = self.radio.average_power()
+                    if(not self.goto_position(azimuth, elevation)):
+                        print("Failed to go to position. It timed out")
+                        return False
+                    
+                    time.sleep(0.1)
+                    map[x][-y - 1] = self.radio.average_power()
                     print(map)
                 
                 going_right = True

@@ -151,9 +151,11 @@ class Servo:
         pass
     
     def begin(self):
-        self.socket.connect((self.ip_addr, self.port))
+        try:
+            self.socket.connect((self.ip_addr, self.port))
+        except: 
+            print('Failed to connect to servo driver')
         
-        self.current_position = self.read_current_position()
         
     def energize(self):
         self.control_word.enable_operation()
@@ -168,7 +170,6 @@ class Servo:
     def denergize(self):
         self.control_word.disable_operation()
         self.write_control_word(self.control_word)
-        
         
     def move_position(self, position):        
         print(position)
@@ -185,9 +186,11 @@ class Servo:
         self.move_position(points)
         
     def set_move_parameters(self):
-        self.write_object(1100, 14, 2000)
-        self.write_object(1111, 10, 50)
-        self.write_object(1111, 16, 50)
+        self.write_object(1100, 14, 2500)   # Velocity
+        self.write_object(1111, 10, 10000)  # Acceleration
+        self.write_object(1111, 16, 10000)  # Deceleration
+        self.write_object(1111, 5, 7000)    # Jerk Accel
+        self.write_object(1111, 6, 7000)    # Jerk Deccel
         
     def read_current_position(self):
         result = self.read_object(680, 5)
@@ -227,11 +230,7 @@ class Servo:
         time.sleep(0.5)
 
     def read_control_word(self):
-        #print("++++++++++++ READ CONTROL WORD +++++++++++++++")
         self.recieved_control_word = self.read_object(1100, 3)
-
-        #for i in range(0, 16):
-        #    print(str(i) + " : ", (int(recieved_control_word) >> i) & 1)
         
     def print_control_word(self):
         print("++++++++++++ READ CONTROL WORD +++++++++++++++")
@@ -253,8 +252,6 @@ class Servo:
         self.socket.send(msg)
         
         time.sleep(0.05)
-        
-        #print("MSG: ", len(msg))
         recieved_msg = b''
         
         while True:
@@ -268,7 +265,6 @@ class Servo:
             else:
                 break
         
-        #print(recieved_msg)
         return bytes.decode(recieved_msg, encoding='ascii')
     
 if __name__ == '__main__':
