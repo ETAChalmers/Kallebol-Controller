@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Leaflet App</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        #map {
+            height: 600px;
+            width: 700px;
+            float: right;
+        }
+        header {
+            height: 100px;
+            background-color: grey;
+        }
+        #controlpanel {
+            padding: 10px;
+        }
+        #statuspanel {
+            padding: 10px;
+        }
+        #kallebolpanel {
+            background-color: grey;
+            height: 600px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1> Kallebol controller </h1>
+    </header>
+
+    <div id="center">
+        <div id="kallebolpanel"> 
+            <div id="controlpanel">
+                <form>
+                    Azimuth: <input id="azimuth" type="number" step="any">
+                    <br>
+                    Elevation: <input id="elevation" type="number" step="any">
+                    <br>
+                    <input type="submit" value="Execute">
+                </form>
+            </div>
+
+            <div id="statuspanel">
+                <form>
+                    Target Azimuth: <input id="azimuth" type="number" step="any" disabled>
+                    <br>
+                    Current Azimuth: <input id="azimuth" type="number" step="any" disabled>
+                    <br>
+                    Target Elevation: <input id="azimuth" type="number" step="any" disabled>
+                    <br>
+                    Current Elevation: <input id="azimuth" type="number" step="any" disabled>
+                </form>
+            </div>
+        </div>
+        <div id="map"></div>
+    </div>
+    
+    
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        var map = L.map('map').setView([57.68762656241046, 11.978561292058446], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        L.marker([57.68762656241046, 11.978561292058446]).addTo(map)
+            .openPopup();
+    </script>
+
+</body>
+</html>

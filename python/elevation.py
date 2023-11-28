@@ -1,6 +1,5 @@
 import socket
 from time import sleep
-import ctypes
 
 ELEV_HOME_START = b'ELEVATION HOME START'
 ELEV_HOME_STOP = b'ELEVATION HOME STOP'
