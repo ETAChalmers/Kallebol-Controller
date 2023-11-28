@@ -35,7 +35,7 @@ class Elevation:
         try:
             self.socket.connect((self.ip_addr, self.port))
         except: 
-            print('Failed to connect')
+            print('Failed to connect to linear actuator server')
             
     def send_command(self, msg):
         recieved_msg = ''
