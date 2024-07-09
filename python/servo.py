@@ -130,7 +130,7 @@ class Control_Word:
 
 
 class Servo:
-    def __init__(self, baudrate = 9600) -> None:
+    def __init__(self, ip_addr, port, baudrate = 9600) -> None:
         self.current_position = 0
         self.target_position = 0
         
@@ -141,8 +141,8 @@ class Servo:
 
         self.speed = 0
 
-        self.ip_addr = '192.168.30.143'
-        self.port = 8886
+        self.ip_addr = ip_addr
+        self.port = port
         
         try:     
             self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

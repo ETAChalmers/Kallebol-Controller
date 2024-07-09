@@ -4,7 +4,7 @@ import time
 import numpy as np
 from datetime import datetime
 
-from radio import Radio
+#from radio import Radio
 
 STEP = 1
 GOTO_FAIL_TRESHHOLD = 10000 # 100ms per point
@@ -17,9 +17,16 @@ class Kallebol:
         self.latitude = 0
         self.longitude = 0
 
+        self.servo_ip_addr = 'IP_ADDRS'
+        self.servo_port = 8896
+
         self.linear_actuatator = Elevation()
-        self.servo = Servo()
-        self.radio = Radio()
+        self.servo = Servo(ip_addr = self.servo_ip_addr, port = self.servo_port)
+        #self.radio = Radio()
+
+    def test(moj):
+        print(moj)
+        print("Hello")
 
     def begin(self):
         self.servo.begin()
