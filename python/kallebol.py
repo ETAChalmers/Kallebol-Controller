@@ -17,10 +17,13 @@ class Kallebol:
         self.latitude = 0
         self.longitude = 0
 
-        self.servo_ip_addr = 'IP_ADDRS'
-        self.servo_port = 8896
+        self.servo_ip_addr = "192.168.30.150"
+        self.servo_port = 8886
 
-        self.linear_actuatator = Elevation()
+        self.elev_ip_addr = '192.168.30.169'
+        self.elev_port = 2217
+        
+        self.linear_actuatator = Elevation(ip_addr=self.elev_ip_addr, port=self.elev_port)
         self.servo = Servo(ip_addr = self.servo_ip_addr, port = self.servo_port)
         #self.radio = Radio()
 
@@ -62,6 +65,9 @@ class Kallebol:
             counter += 1
             
         return False
+    
+    def move_servo(self, azimuth):
+        self.servo.move_azimuth(azimuth)
     
     def sweep(self, min_elev, max_elev, steps_elev, min_azi, max_azi, steps_azi):
         going_right = True

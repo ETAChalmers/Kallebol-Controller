@@ -153,6 +153,7 @@ class Servo:
     def begin(self):
         try:
             self.socket.connect((self.ip_addr, self.port))
+            print("Connected to servo")
         except: 
             print('Failed to connect to servo driver')
         
@@ -167,9 +168,12 @@ class Servo:
         self.control_word.start_operation()
         self.write_control_word(self.control_word)
         
+        print("Servo Energized")
+        
     def denergize(self):
         self.control_word.disable_operation()
         self.write_control_word(self.control_word)
+        print("Servo denergized")
         
     def move_position(self, position):        
         print(position)
@@ -194,7 +198,7 @@ class Servo:
         
     def read_current_position(self):
         result = self.read_object(680, 5)
-        result = float(result.split('\r')[0])
+        result = result.split('\r')[0]
         
         return result
         

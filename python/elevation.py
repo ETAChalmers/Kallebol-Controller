@@ -16,7 +16,7 @@ MAX_HIGHEST = 0
 MAX_LOWEST = 1100
     
 class Elevation:
-    def __init__(self, baudrate = 9600) -> None:
+    def __init__(self, ip_addr, port, baudrate = 9600,) -> None:
         self.elevation = 0
         self.target_position = 0
         self.current_speed = 0
