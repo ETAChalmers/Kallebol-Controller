@@ -90,6 +90,9 @@ class MainWindow(QMainWindow):
         azi = 0
         try:
             azi = float(self.kallebol.servo.read_current_position())/840
+            elev1 = self.kallebol.linear_actuatator.get_position()
+            print(elev1)
+            print(type(elev1))
         except Exception as e:
             print(e)
         elev = 0.0

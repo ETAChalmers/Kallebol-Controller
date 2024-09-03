@@ -22,7 +22,7 @@ class Elevation:
         self.current_speed = 0
         
         self.baudrate = baudrate    
-        self.ip_addr = '192.168.30.169'
+        self.ip_addr = ip_addr
         self.port = 2217
         try:     
             self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

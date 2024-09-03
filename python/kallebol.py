@@ -17,10 +17,10 @@ class Kallebol:
         self.latitude = 0
         self.longitude = 0
 
-        self.servo_ip_addr = "192.168.30.150"
+        self.servo_ip_addr = "10.250.255.8"
         self.servo_port = 8886
 
-        self.elev_ip_addr = '192.168.30.169'
+        self.elev_ip_addr = '10.250.45.1'
         self.elev_port = 2217
         
         self.linear_actuatator = Elevation(ip_addr=self.elev_ip_addr, port=self.elev_port)
