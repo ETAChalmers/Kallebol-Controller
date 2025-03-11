@@ -3,3 +3,4 @@ pyrtlsdrlib
 numpy
 scipy
 matplotlib
+pyads

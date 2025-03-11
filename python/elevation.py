@@ -1,5 +1,6 @@
 import socket
 from time import sleep
+import pyads as ads
 
 ELEV_HOME_START = b'ELEVATION HOME START'
 ELEV_HOME_STOP = b'ELEVATION HOME STOP'
@@ -22,19 +23,32 @@ class Elevation:
         self.current_speed = 0
         
         self.baudrate = baudrate    
-        self.ip_addr = ip_addr
+        self.ip_addr = "10.30.200.89"
         self.port = 2217
+
+        self.client_netid = "5.146.142.192.1.1"
+        print(self.client_netid)
+
+        #ads.add_route(self.client_netid, self.ip_addr)
+
+        self.connection = ads.Connection(self.client_netid, ads.PORT_TC3PLC1, self.ip_addr)
+
+        """ 
         try:     
             self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         except:
             print('Failed to open socket on port %s', self.port)
         pass
+        """
     
     def begin(self):
         try:
-            self.socket.connect((self.ip_addr, self.port))
-        except: 
-            print('Failed to connect to linear actuator server')
+            #self.socket.connect((self.ip_addr, self.port))
+            self.connection.open()
+
+            print(self.connection.read_state())
+        except Exception as e: 
+            print('Failed to connect to linear actuator server:', e)
             
     def send_command(self, msg):
         recieved_msg = ''
@@ -77,26 +91,26 @@ class Elevation:
             points = MAX_HIGHEST
 
         msg = ELEV_GOTO + bytearray(str(points).encode('ascii'))
+        
         self.send_command(msg)
         
     def get_status(self):
         print(self.send_command(ELEV_GET_ALL))
         
     def get_position(self):
-        msg = self.send_command(ELEV_GET_POS)
-        msg = msg.split("\\n")
+        msg = self.connection.read_by_name("MAIN.Elev_ENC_value")
         print(msg)
-        
     
     def stop(self):
         self.socket.close()
     
 if __name__ == '__main__':
-    elev = Elevation()
+    elev = Elevation(ip_addr="10.30.200.89", port=2217)
     elev.begin()
-    #elev.start_homing()
-    elev.goto_absolute(300)
     elev.get_position()
+    #elev.start_homing()
+    #elev.goto_absolute(300)
+    #elev.get_position()
     #print(elev.send_command(ELEV_GET_ALL))""
     
-    elev.stop()
+    #elev.stop()
