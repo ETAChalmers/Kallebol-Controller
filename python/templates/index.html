@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<!-- Hej hej, titta inte för nog här. Det finns inget att se här nämnligen -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Parabola Control</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        .btn {
+            font-size: 20px;
+            padding: 10px 20px;
+            margin: 10px;
+        }
+        .controls {
+            margin: 30px 0;
+        }
+        .readout {
+            margin: 20px auto;
+            display: inline-block;
+            text-align: left;
+        }
+        .readout label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        input[readonly] {
+            font-size: 18px;
+            text-align: center;
+            padding: 5px;
+            width: 150px;
+        }
+         img { max-width: 300px; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Kallebol Kontrol</h1>
+
+    <form method="POST" action="/move" class="controls">
+        <div>
+            <button class="btn" name="direction" value="up">⬆️ Elevation Down</button>
+        </div>
+        <div>
+            <button class="btn" name="direction" value="left">⬅️ Azimuth Left</button>
+            <button class="btn" name="direction" value="right">➡️ Azimuth Right</button>
+        </div>
+        <div>
+            <button class="btn" name="direction" value="down">⬇️ Elevation Up</button>
+        </div>
+    </form>
+
+    <div class="readout">
+        <label for="azimuth">Azimuth target (°):</label>
+        <input type="text" id="azimuth" value="{{ azimuth }}" readonly>
+
+        <label for="azimuth">Azimuth actual(°)</label>
+        <input type="text" id="azimuth_act" value="{{ azimuth_act }}" readonly>
+
+        <label for="elevation">Elevation target (mm):</label>
+        <input type="text" id="elevation" value="{{ elevation }}" readonly>
+
+        <label for="elevation">Elevation actual (mm):</label>
+        <input type="text" id="elevation_act" value="{{ elevation_act }}" readonly>
+        
+    </div>
+
+    <img src="{{ url_for('static', filename='kallebol.png') }}" alt="Parabolic Dish">
+
+    <h4> camera is reachable here http://10.30.45.2 </h4>
+    <h3>Yes, Elevation in mm is suboptimal. I just need to convert mm ➡️ degrees</h3>
+    <h3>But, more mm ➡️ more depression, #relatable</h3>
+    <script>
+        function updatePosition() {
+            fetch('/position')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('azimuth_act').value = data.azimuth_act.toFixed(1);
+                    document.getElementById('elevation_act').value = data.elevation_act.toFixed(1);
+                })
+                .catch(error => console.error('Error fetching position:', error));
+        }
+
+        // Update every second
+        setInterval(updatePosition, 1000);
+        window.onload = updatePosition;
+    </script>
+
+</body>
+</html>
